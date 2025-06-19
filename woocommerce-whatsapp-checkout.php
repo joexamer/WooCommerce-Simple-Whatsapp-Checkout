@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-// Check if WooCommerce is active
 function WC_Simple_WA_check_woocommece_active(){
 	if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 		echo "<div class='error'><p><strong>WooCommerce Simple Whatsapp Checkout</strong> requires <strong>WooCommerce plugin.</strong>&nbsp; Please <a href='https://wordpress.org/plugins/woocommerce' target=_blank>install</a> and activate it.</p></div>";
@@ -24,12 +23,10 @@ function WC_Simple_WA_check_woocommece_active(){
 }
 add_action('admin_notices', 'WC_Simple_WA_check_woocommece_active');
 
-// Add WhatsApp number setting to WooCommerce General settings
 add_filter( 'woocommerce_general_settings', 'wc_simple_wa_add_settings_field' );
 function wc_simple_wa_add_settings_field( $settings ) {
     $updated_settings = array();
     foreach ( $settings as $section ) {
-        // Add the new field before the "Checkout" section if it exists
         if ( isset( $section['id'] ) && 'checkout_options' == $section['id'] && isset( $section['type'] ) && 'title' == $section['type'] ) {
             $updated_settings[] = array(
                 'name'     => __( 'WhatsApp Checkout Settings', 'woocommerce-simple-whatsapp-checkout' ),
@@ -56,7 +53,6 @@ function wc_simple_wa_add_settings_field( $settings ) {
     return $updated_settings;
 }
 
-// Redirect to WhatsApp on the Thank You page
 add_action( 'woocommerce_thankyou', 'wc_simple_wa_thankyou_redirect', 10, 1 );
 function wc_simple_wa_thankyou_redirect( $order_id ) {
     if ( ! $order_id ) {
@@ -67,13 +63,11 @@ function wc_simple_wa_thankyou_redirect( $order_id ) {
     $whatsapp_number = get_option( 'wc_simple_wa_whatsapp_number' );
 
     if ( empty( $whatsapp_number ) ) {
-        return; // No WhatsApp number set, do nothing
+        return;
     }
 
-    // Format the WhatsApp message
     $msg = "*New Order Details (Order #{$order_id}):*\n\n";
 
-    // Billing Details
     $msg .= "*Billing Details:*\n";
     $msg .= "Name: " . $order->get_billing_first_name() . " " . $order->get_billing_last_name() . "\n";
     $msg .= "Address: " . $order->get_billing_address_1() . "\n";
@@ -104,7 +98,6 @@ function wc_simple_wa_thankyou_redirect( $order_id ) {
     }
 
 
-    // Order Items
     $msg .= "*Order Items:*\n";
     foreach ( $order->get_items() as $item_id => $item ) {
         $product = $item->get_product();
@@ -116,7 +109,6 @@ function wc_simple_wa_thankyou_redirect( $order_id ) {
     }
     $msg .= "\n";
 
-    // Order Totals
     $msg .= "*Order Totals:*\n";
     $msg .= "Subtotal: " . wc_price( $order->get_subtotal(), array( 'currency' => $order->get_currency() ) ) . "\n";
     if ( $order->get_total_discount() > 0 ) {
@@ -131,17 +123,14 @@ function wc_simple_wa_thankyou_redirect( $order_id ) {
     $msg .= "Payment Method: " . $order->get_payment_method_title() . "\n";
     $msg .= "*Order Total: " . wc_price( $order->get_total(), array( 'currency' => $order->get_currency() ) ) . "*\n\n";
 
-    // Customer Note
     if ( $order->get_customer_note() ) {
         $msg .= "*Customer Note:*\n" . $order->get_customer_note() . "\n\n";
     }
 
     $msg .= "Thank you!";
 
-    // WhatsApp API link
     $whatsapp_url = 'https://api.whatsapp.com/send?phone=' . urlencode( $whatsapp_number ) . '&text=' . rawurlencode( $msg );
 
-    // JavaScript for auto-redirection in a new tab after 3 seconds
     echo "
     <script type='text/javascript'>
         setTimeout(function() {
