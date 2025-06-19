@@ -1,0 +1,32 @@
+/**
+ * Plugin Name: WooCommerce Simple Whatsapp Checkout
+ * Description: Adds a simple WhatsApp checkout option for single WooCommerce stores.
+ * Version: 1.0
+ * Author: DigaTopia, Yousef Amer
+ * Author URI: https://github.com/joexamer
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ */
+
+.wc-simple-wa-button {
+    display: inline-block;
+    background-color: #25D366; /* WhatsApp green */
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.wc-simple-wa-button:hover {
+    background-color: #1DA851;
+}
+
+.wc-simple-wa-thankyou-container {
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+}
